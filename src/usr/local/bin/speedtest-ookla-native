@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+#[ -x "/usr/local/bin/speedtest" ] && /usr/local/bin/speedtest --accept-license -a --progress=no
+#/usr/local/bin/speedtest --accept-license -a -f json --server-id=${server:-5342}
+[ -x "/usr/local/bin/speedtest.sh" ] && /usr/local/bin/speedtest.sh -H | awk '/^ISP/{found=1} found'
