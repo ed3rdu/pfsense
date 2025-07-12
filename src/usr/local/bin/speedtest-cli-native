@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#
+[ -x "/usr/local/bin/speedtest-cli" ] && /usr/local/bin/speedtest-cli
+
