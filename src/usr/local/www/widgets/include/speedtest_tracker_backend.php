@@ -128,6 +128,8 @@ echo json_encode([
         "cached_last_time" => $cached_last_time,
         "latest_time_checked" => $latest_time,
         "cache_file_exists" => file_exists($cache_file),
-        "time_data" => $labels
+        "time_data" => $labels,
+        "cache_age" => file_exists($cache_file) ? (time() - filemtime($cache_file)) : null,
+        "cache_max_age" => $cache_ttl
     ]
 ]);

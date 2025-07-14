@@ -13,6 +13,12 @@ require_once("guiconfig.inc");
 <thead>
 	<title>Speedtest Tracker</title>
 	<style>
+		:root {
+			/* Match traffic_graphs.widget.php (D3 Category10 palette) */
+			--download-color: #1f77b4; /* blue, matches "in" */
+			--upload-color: #ff7f0e;   /* orange, matches "out" */
+			--label-color: #212529;
+		}
 		canvas {
 			-moz-user-select: none;
 			-webkit-user-select: none;
@@ -43,26 +49,31 @@ function renderChart(timestampData, downloadData, uploadData) {
 			timeStyle: 'short'
 		}));
 	});
-	const darkorange = 'rgb(255,127,14)';
-	const steelblue = 'rgb(39,109,156)';
-	const labelColor = 'rgb(0,0,0)'; // 255 = white
+	
+	// Get theme colors from CSS variables
+	const rootStyle = getComputedStyle(document.documentElement);
 
-	const upload_speeds = <?= json_encode(array_values($upload_data ?? [])); ?>;
-	const download_speeds = <?= json_encode(array_values($download_data ?? [])); ?>
+	let labelColor = rootStyle.getPropertyValue('--label-color').trim() || '#212529';
+	const tdtag = document.querySelector("td");
+	if (tdtag) {
+		labelColor = getComputedStyle(tdtag).color;
+	}
+	const downloadColor = rootStyle.getPropertyValue('--download-color').trim() || '#1f77b4';
+	const uploadColor = rootStyle.getPropertyValue('--upload-color').trim() || '#ff7f0e';
 
 	const lineChartData = {
 		labels: TIMELABELS,
 		datasets: [{
             label: 'Download',
-            backgroundColor: color(steelblue).alpha(0.2).rgbString(),
-            borderColor: steelblue,
+            backgroundColor: color(downloadColor).alpha(0.2).rgbString(),
+            borderColor: downloadColor,
             borderWidth: 2,
             data: downloadData 
         },
 		{
 			label: 'Upload',
-			backgroundColor: color(darkorange).alpha(0.2).rgbString(),
-			borderColor: darkorange,
+			backgroundColor: color(uploadColor).alpha(0.2).rgbString(),
+			borderColor: uploadColor,
 			borderWidth: 2,
 			data: uploadData
 		}]
@@ -74,8 +85,8 @@ function renderChart(timestampData, downloadData, uploadData) {
 		options: {
 			responsive: true,
 			tension: 0.35,
-			fill: true,
-			pointStyle: 'rectRounded',
+			//fill: true,
+			//pointStyle: 'rectRounded',
 			legend: {
 				position: 'top'
 			},
@@ -112,7 +123,6 @@ function reloadWidget(force = false) {
     })
     .catch(err => console.error("Widget fetch failed:", err));
 }
-
 
 // Initial load and periodic refresh
 reloadWidget(true);
